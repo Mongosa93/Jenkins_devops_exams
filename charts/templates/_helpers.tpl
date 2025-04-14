@@ -1,12 +1,12 @@
 {{/*
-Renvoie le nom du chart (ou la valeur surchargée par .Values.nameOverride s'il est défini).
+Renvoie le nom du chart, ou la valeur surchargée via .Values.nameOverride s'il est défini.
 */}}
 {{- define "jenkins-devops-exams.name" -}}
   {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
-Renvoie le nom complet (fully qualified name) en combinant le nom de release et le nom du chart.
+Renvoie le nom complet (fully qualified name) en combinant le nom de la release et le nom du chart.
 */}}
 {{- define "jenkins-devops-exams.fullname" -}}
   {{- printf "%s-%s" .Release.Name (include "jenkins-devops-exams.name" .) | trunc 63 | trimSuffix "-" -}}
@@ -14,7 +14,7 @@ Renvoie le nom complet (fully qualified name) en combinant le nom de release et 
 
 {{/*
 Renvoie le nom du ServiceAccount.
-Utilise .Values.serviceAccount.name s'il est défini, sinon génère un nom complet.
+Utilise .Values.serviceAccount.name s'il est défini, sinon le fullname.
 */}}
 {{- define "jenkins-devops-exams.serviceAccountName" -}}
   {{- if .Values.serviceAccount.name -}}
@@ -26,24 +26,26 @@ Utilise .Values.serviceAccount.name s'il est défini, sinon génère un nom complet
 
 {{/*
 Renvoie un ensemble de labels par défaut pour vos ressources.
+Nous forçons ici la conversion en chaîne en entourant chaque valeur de guillemets.
 */}}
 {{- define "jenkins-devops-exams.labels" -}}
-app.kubernetes.io/name: {{ include "jenkins-devops-exams.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
-app.kubernetes.io/version: {{ .Chart.AppVersion }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
+app.kubernetes.io/name: "{{ include "jenkins-devops-exams.name" . }}"
+app.kubernetes.io/instance: "{{ .Release.Name }}"
+app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+app.kubernetes.io/managed-by: "{{ .Release.Service }}"
 {{- end -}}
 
 {{/*
 Renvoie les labels utilisés pour le selector des pods.
 */}}
 {{- define "jenkins-devops-exams.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "jenkins-devops-exams.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/name: "{{ include "jenkins-devops-exams.name" . }}"
+app.kubernetes.io/instance: "{{ .Release.Name }}"
 {{- end -}}
 
-{{/* Aliases pour compatibilité avec vos templates existants appelant fastapiapp.* */}}
-
+{{/*
+Alias pour compatibilité : redirige les appels fastapiapp vers jenkins-devops-exams.
+*/}}
 {{- define "fastapiapp.serviceAccountName" -}}
   {{ include "jenkins-devops-exams.serviceAccountName" . }}
 {{- end -}}
@@ -52,14 +54,14 @@ app.kubernetes.io/instance: {{ .Release.Name }}
   {{ include "jenkins-devops-exams.labels" . }}
 {{- end -}}
 
-{{- define "fastapiapp.name" -}}
-  {{ include "jenkins-devops-exams.name" . }}
+{{- define "fastapiapp.selectorLabels" -}}
+  {{ include "jenkins-devops-exams.selectorLabels" . }}
 {{- end -}}
 
 {{- define "fastapiapp.fullname" -}}
   {{ include "jenkins-devops-exams.fullname" . }}
 {{- end -}}
 
-{{- define "fastapiapp.selectorLabels" -}}
-  {{ include "jenkins-devops-exams.selectorLabels" . }}
+{{- define "fastapiapp.name" -}}
+  {{ include "jenkins-devops-exams.name" . }}
 {{- end -}}
