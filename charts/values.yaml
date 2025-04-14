@@ -62,7 +62,13 @@ nginx:
           }
       }
 
-# Configuration du serviceAccount (Option 1)
+# Bloc de configuration global pour le service (utilisé par le template service.yaml)
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 80
+
+# Configuration du ServiceAccount
 serviceAccount:
   create: true
   annotations: {}
