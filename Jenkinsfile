@@ -35,21 +35,21 @@ pipeline {
       steps {
         withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
           sh "kubectl cluster-info"  // Vérification de l'accès au cluster
-          sh "helm upgrade --install Jenkins_devops_exams ./charts --namespace dev --create-namespace --set environment=dev"
+          sh "helm upgrade --install jenkins-devops-exams ./charts --namespace dev --create-namespace --set environment=dev"
         }
       }
     }
     stage('Deploy to QA') {
       steps {
         withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
-          sh "helm upgrade --install Jenkins_devops_exams ./charts --namespace qa --create-namespace --set environment=qa"
+          sh "helm upgrade --install jenkins-devops-exams ./charts --namespace qa --create-namespace --set environment=qa"
         }
       }
     }
     stage('Deploy to Staging') {
       steps {
         withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
-          sh "helm upgrade --install Jenkins_devops_exams ./charts --namespace staging --create-namespace --set environment=staging"
+          sh "helm upgrade --install jenkins-devops-exams ./charts --namespace staging --create-namespace --set environment=staging"
         }
       }
     }
@@ -58,7 +58,7 @@ pipeline {
         // Stage PROD en mode manuel
         input message: 'Confirmez le déploiement en PROD', ok: 'Deploy'
         withCredentials([file(credentialsId: 'config', variable: 'KUBECONFIG')]) {
-          sh "helm upgrade --install Jenkins_devops_exams ./charts --namespace prod --create-namespace --set environment=prod"
+          sh "helm upgrade --install jenkins-devops-exams ./charts --namespace prod --create-namespace --set environment=prod"
         }
       }
     }
