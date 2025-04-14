@@ -62,26 +62,7 @@ nginx:
           }
       }
 
-# Bloc de configuration global pour le service utilisé par certains templates
+# Bloc de configuration global pour le service (utilisé par certains templates)
 service:
   type: ClusterIP
-  port: 80
-  targetPort: 80
-
-# Configuration du ServiceAccount
-serviceAccount:
-  create: true
-  annotations: {}
-  name: ""
-
-# Configuration de l'Ingress (ajouté pour éviter l'erreur dans le template ingress.yaml)
-ingress:
-  enabled: false
-  className: ""
-  annotations: {}
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
+  port:
