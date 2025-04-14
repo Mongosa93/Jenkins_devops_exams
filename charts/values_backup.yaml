@@ -1,14 +1,7 @@
----
 replicaCount: 1
 
 # Environnement : dev, qa, staging ou prod
 environment: dev
-
-# Bloc top-level requis par certains templates (ex. deployment.yaml)
-image:
-  repository: salim2025/movie-service
-  pullPolicy: IfNotPresent
-  tag: "latest"
 
 movieService:
   image: salim2025/movie-service
@@ -18,9 +11,7 @@ movieService:
     port: 8001
   env:
     - name: DATABASE_URI
-      value: >
-        postgresql://movie_db_username:movie_db_password@
-        movie-db/movie_db_{{ .Values.environment }}
+      value: "postgresql://movie_db_username:movie_db_password@movie-db/movie_db_{{ .Values.environment }}"
     - name: CAST_SERVICE_HOST_URL
       value: "http://cast-service:8000/api/v1/casts/"
 
@@ -32,9 +23,7 @@ castService:
     port: 8002
   env:
     - name: DATABASE_URI
-      value: >
-        postgresql://cast_db_username:cast_db_password@
-        cast-db/cast_db_{{ .Values.environment }}
+      value: "postgresql://cast_db_username:cast_db_password@cast-db/cast_db_{{ .Values.environment }}"
 
 movieDB:
   image: postgres:12.1-alpine
@@ -45,8 +34,7 @@ movieDB:
     - name: POSTGRES_PASSWORD
       value: movie_db_password
     - name: POSTGRES_DB
-      value: >
-        movie_db_{{ .Values.environment }}
+      value: "movie_db_{{ .Values.environment }}"
 
 castDB:
   image: postgres:12.1-alpine
@@ -57,8 +45,7 @@ castDB:
     - name: POSTGRES_PASSWORD
       value: cast_db_password
     - name: POSTGRES_DB
-      value: >
-        cast_db_{{ .Values.environment }}
+      value: "cast_db_{{ .Values.environment }}"
 
 nginx:
   image: nginx:latest
@@ -75,18 +62,19 @@ nginx:
           }
       }
 
-# Bloc de configuration global pour le service (utilisé par certains templates)
+# Bloc de configuration global pour certains templates de service
 service:
   type: ClusterIP
   port: 80
   targetPort: 80
 
-# Configuration du ServiceAccount
+# Configuration du ServiceAccount, utilise notamment dans templates/serviceaccount.yaml
 serviceAccount:
   create: true
   annotations: {}
   name: ""
 
+# Configuration de l'Ingress (désactivé par défaut)
 ingress:
   enabled: false
   className: ""
@@ -98,6 +86,7 @@ ingress:
           pathType: ImplementationSpecific
   tls: []
 
+# Configuration de l'autoscaling (HPA)
 autoscaling:
   enabled: false
   minReplicas: 1

@@ -1,62 +1,65 @@
 {{/*
-Expand the name of the chart.
+Renvoie le nom du chart (ou la valeur surchargée par .Values.nameOverride s'il est défini).
 */}}
-{{- define "fastapiapp.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- define "jenkins-devops-exams.name" -}}
+  {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 {{/*
-Create a default fully qualified app name.
-We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
-If release name contains chart name it will be used as a full name.
+Renvoie le nom complet (fully qualified name) en combinant le nom de release et le nom du chart.
 */}}
-{{- define "fastapiapp.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
-{{- end }}
-{{- end }}
-{{- end }}
+{{- define "jenkins-devops-exams.fullname" -}}
+  {{- printf "%s-%s" .Release.Name (include "jenkins-devops-exams.name" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 {{/*
-Create chart name and version as used by the chart label.
+Renvoie le nom du ServiceAccount.
+Utilise .Values.serviceAccount.name s'il est défini, sinon génère un nom complet.
 */}}
-{{- define "fastapiapp.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
-{{- end }}
+{{- define "jenkins-devops-exams.serviceAccountName" -}}
+  {{- if .Values.serviceAccount.name -}}
+    {{- .Values.serviceAccount.name | trunc 63 | trimSuffix "-" -}}
+  {{- else -}}
+    {{ include "jenkins-devops-exams.fullname" . }}
+  {{- end -}}
+{{- end -}}
 
 {{/*
-Common labels
+Renvoie un ensemble de labels par défaut pour vos ressources.
 */}}
-{{- define "fastapiapp.labels" -}}
-helm.sh/chart: {{ include "fastapiapp.chart" . }}
-{{ include "fastapiapp.selectorLabels" . }}
-{{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
-{{- end }}
-app.kubernetes.io/managed-by: {{ .Release.Service }}
-{{- end }}
-
-{{/*
-Selector labels
-*/}}
-{{- define "fastapiapp.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "fastapiapp.name" . }}
+{{- define "jenkins-devops-exams.labels" -}}
+app.kubernetes.io/name: {{ include "jenkins-devops-exams.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
+app.kubernetes.io/version: {{ .Chart.AppVersion }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end -}}
 
 {{/*
-Create the name of the service account to use
+Renvoie les labels utilisés pour le selector des pods.
 */}}
+{{- define "jenkins-devops-exams.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "jenkins-devops-exams.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{/* Aliases pour compatibilité avec vos templates existants appelant fastapiapp.* */}}
+
 {{- define "fastapiapp.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "fastapiapp.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}
+  {{ include "jenkins-devops-exams.serviceAccountName" . }}
+{{- end -}}
+
+{{- define "fastapiapp.labels" -}}
+  {{ include "jenkins-devops-exams.labels" . }}
+{{- end -}}
+
+{{- define "fastapiapp.name" -}}
+  {{ include "jenkins-devops-exams.name" . }}
+{{- end -}}
+
+{{- define "fastapiapp.fullname" -}}
+  {{ include "jenkins-devops-exams.fullname" . }}
+{{- end -}}
+
+{{- define "fastapiapp.selectorLabels" -}}
+  {{ include "jenkins-devops-exams.selectorLabels" . }}
+{{- end -}}

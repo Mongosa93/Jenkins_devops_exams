@@ -1,7 +1,8 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: nginx-config
+  name: {{ include "jenkins-devops-exams.fullname" . }}-nginx
 data:
   default.conf: |-
-    {{ .Values.nginx.config.nginxConf | indent 4 }}
+{{ .Values.nginx.config.nginxConf | nindent 4 }}
+

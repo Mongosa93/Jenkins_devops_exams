@@ -1,7 +1,6 @@
 apiVersion: v2
 name: jenkins-devops-exams
-description: Helm chart pour déployer une application multi-conteneurs sur K3s
-type: application
-icon: https://www.svgrepo.com/download/330413/fastapi.svg
-version: 0.1.0
-appVersion: "latest"
+description: Helm chart for Jenkins DevOps exams
+version: 1.0.0
+appVersion: "1.0"
+
