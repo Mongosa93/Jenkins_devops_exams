@@ -53,12 +53,17 @@ nginx:
   service:
     port: 8080
   config:
-    # Contenu du fichier nginx_config.conf (A verifier url)
     nginxConf: |
       server {
-          listen       8080;
-          server_name  localhost;
+          listen 8080;
+          server_name localhost;
           location / {
               proxy_pass http://movie_service:8000;
           }
       }
+
+# Configuration du serviceAccount (Option 1)
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
