@@ -59,6 +59,6 @@ nginx:
           listen       8080;
           server_name  localhost;
           location / {
-              proxy_pass http://localhost:8000;
+              proxy_pass http://movie_service:8000;
           }
       }
