@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-service
+  labels:
+    app: cast-service
+    environment: {{ .Values.environment }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: cast-service
+  template:
+    metadata:
+      labels:
+        app: cast-service
+        environment: {{ .Values.environment }}
+    spec:
+      containers:
+      - name: cast-service
+        image: "{{ .Values.castService.image }}:{{ .Values.castService.tag }}"
+        ports:
+        - containerPort: {{ .Values.castService.containerPort }}
+        env:
+        {{- range .Values.castService.env }}
+        - name: {{ .name }}
+          value: "{{ .value }}"
+        {{- end }}

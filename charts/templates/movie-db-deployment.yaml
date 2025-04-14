@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: movie-db
+  labels:
+    app: movie-db
+    environment: {{ .Values.environment }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: movie-db
+  template:
+    metadata:
+      labels:
+        app: movie-db
+        environment: {{ .Values.environment }}
+    spec:
+      containers:
+      - name: movie-db
+        image: "{{ .Values.movieDB.image }}"
+        ports:
+        - containerPort: {{ .Values.movieDB.containerPort }}
+        env:
+        {{- range .Values.movieDB.env }}
+        - name: {{ .name }}
+          value: "{{ .value }}"
+        {{- end }}

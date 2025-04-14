@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cast-db
+  labels:
+    app: cast-db
+    environment: {{ .Values.environment }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: cast-db
+  template:
+    metadata:
+      labels:
+        app: cast-db
+        environment: {{ .Values.environment }}
+    spec:
+      containers:
+      - name: cast-db
+        image: "{{ .Values.castDB.image }}"
+        ports:
+        - containerPort: {{ .Values.castDB.containerPort }}
+        env:
+        {{- range .Values.castDB.env }}
+        - name: {{ .name }}
+          value: "{{ .value }}"
+        {{- end }}

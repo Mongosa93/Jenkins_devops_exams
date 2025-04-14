@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cast-db
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: {{ .Values.castDB.containerPort }}
+  selector:
+    app: cast-db
